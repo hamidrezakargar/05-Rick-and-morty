@@ -4,26 +4,30 @@ import "./App.css";
 import CharacterList from "./components/CharacterList";
 import Navbar, { SearchResult } from './components/Navbar';
 import CharacterDetail from "./components/characterDetail";
-
-
-
-
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+////////////////////////////////////
 function App() {
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-
+  //////////////////////////////////
   useEffect(() => {
     setIsLoading(true);
-    fetch("https://rickandmortyapi.com/api/character")
-      .then((res) => res.json())
-      .then((data) => setCharacters(data.results.slice(0, 4)));
-      setIsLoading(false);
+    axios.get("https://rickandmortyapi.com/api/character")
+      .then((res) => {
+        setCharacters(res.data.results.slice(0, 4))
+        // setIsLoading(false)
+      })
+      .catch((err) => {
+        // setIsLoading(false);
+        toast.error(err.response.data.error);
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
     <div className="app">
-
+      <Toaster />
       <Navbar>
         <SearchResult numOfResult={characters.length} />
       </Navbar>
@@ -31,18 +35,12 @@ function App() {
       <Main>
         <CharacterList characters={characters} isLoading={isLoading} />
         <CharacterDetail />
-
       </Main>
-
     </div>
   );
 }
 export default App;
-
+///////////////////////////////////////
 function Main({ children }) {
-  return (
-    <div className="main">
-      {children}
-    </div>
-  );
+  return <div className="main">{children}</div>;
 }
