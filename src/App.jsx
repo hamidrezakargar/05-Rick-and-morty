@@ -10,7 +10,8 @@ import axios from "axios";
 function App() {
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [query,setQuery] = useState("");
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
   //////////////////////////////////
   useEffect(() => {
     setIsLoading(true);
@@ -28,6 +29,11 @@ function App() {
       .finally(() => setIsLoading(false));
   }, [query]);
 
+  const handleSelectCharacter = (id) => {
+    setSelectedId(preveId => preveId == id ?null : id);
+  };
+  // console.log(selectedId);
+
   return (
     <div className="app">
       <Toaster />
@@ -37,8 +43,12 @@ function App() {
       </Navbar>
 
       <Main>
-        <CharacterList characters={characters} isLoading={isLoading} />
-        <CharacterDetail />
+        <CharacterList
+          characters={characters}
+          isLoading={isLoading}
+          onSelectCharacter={handleSelectCharacter}
+          selectedId={selectedId} />
+        <CharacterDetail selectedId={selectedId} />
       </Main>
     </div>
   );
