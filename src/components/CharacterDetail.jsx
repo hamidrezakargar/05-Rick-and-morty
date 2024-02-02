@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "./Loader";
 
-function CharacterDetail({ selectedId }) {
+function CharacterDetail({ selectedId, onAddFavourite, isAddToFavourites }) {
 
   const [character, setCharacter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [episodes, setEpisodes] = useState([]);
 
 
   useEffect(() => {
@@ -17,6 +18,12 @@ function CharacterDetail({ selectedId }) {
         setCharacter(null);
         const { data } = await axios.get(`https://rickandmortyapi.com/api/character/${selectedId}`);
         setCharacter(data);
+
+        const episodesId = data.episode.map((e) => e.split("/").at(-1));
+
+        const { data: episodeData } = await axios.get(`https://rickandmortyapi.com/api/episode/${episodesId}`);
+
+        setEpisodes([episodeData].flat().slice(0, 4));
 
       } catch (error) {
         toast.error(error.response.data.error)
@@ -29,11 +36,11 @@ function CharacterDetail({ selectedId }) {
   }, [selectedId]);
 
   if (isLoading)
-  return (
-    <div style={{ flex: 1}} >
-      <Loader />
-    </div>
-  );
+    return (
+      <div style={{ flex: 1 }} >
+        <Loader />
+      </div>
+    );
 
 
 
@@ -67,9 +74,15 @@ function CharacterDetail({ selectedId }) {
             <p>{character.location.name}</p>
           </div>
           <div className="actions">
-            <button className="btn btn--primary">
+            {isAddToFavourites ? (
+              <p>Aleady Added To Favourites</p>
+            ) : (
+              <button
+              onClick={() => onAddFavourite(character)}
+              className="btn btn--primary">
               Add to Favourit
             </button>
+            )}
           </div>
         </div>
       </div>
