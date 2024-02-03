@@ -33,7 +33,7 @@ function App() {
     setSelectedId(preveId => preveId == id ? null : id);
   };
   const handleAddFavourite = (char) => {
-    setFavourites((preFav) => [...preFav, char]);
+    setFavourites((preFav) => [ ...preFav, char]);
   };
   const isAddToFavourites = favourites.map((fav) => fav.id).includes(selectedId);
 
